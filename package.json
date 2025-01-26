@@ -1,0 +1,27 @@
+{
+  "name": "mcp-runner",
+  "version": "1.0.0",
+  "description": "SDK for running MCP servers based on configuration",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "npx tsx src/example.ts"
+  },
+  "keywords": [
+    "mcp",
+    "sdk",
+    "server-runner"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.4.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3"
+  }
+}
