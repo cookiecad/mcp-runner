@@ -75,11 +75,22 @@ export class ServerManager {
       )
     });
 
-    // Create client with transport
-    this.client = new Client({
-      name: 'mcp-runner',
-      version: '1.0.0'
-    });
+    // Create client with required capabilities
+    this.client = new Client(
+      {
+        name: 'mcp-runner',
+        version: '1.0.0'
+      },
+      {
+        capabilities: {
+          experimental: {},
+          sampling: {},
+          roots: {
+            listChanged: false
+          }
+        }
+      }
+    );
 
     // Connect client with transport
     await this.client.connect(transport);

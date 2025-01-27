@@ -5,10 +5,14 @@
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "bin": {
+    "mcp-runner": "dist/cli.js"
+  },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && chmod +x dist/cli.js",
     "dev": "tsc --watch",
-    "test": "npx tsx src/example.ts"
+    "test": "npx tsx src/example.ts",
+    "cli": "node dist/cli.js"
   },
   "keywords": [
     "mcp",

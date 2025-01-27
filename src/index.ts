@@ -1,6 +1,24 @@
 import { ServerManager } from './ServerManager.js';
 
 /**
+ * List all available tools for a specified server
+ * @param serverName - Name of the server to query
+ * @returns Promise resolving with array of available tools
+ */
+export async function listTools(serverName: string) {
+  const serverManager = ServerManager.getInstance();
+
+  try {
+    const client = await serverManager.getClient(serverName);
+    const { tools } = await client.listTools({});
+    return tools || [];
+  } catch (error) {
+    console.error('Error listing tools:', error instanceof Error ? error.message : String(error));
+    throw error;
+  }
+}
+
+/**
  * Run an MCP server with the specified parameters
  * @param serverName - Name of the server to run from configuration
  * @param params - Parameters to pass to the server's tool

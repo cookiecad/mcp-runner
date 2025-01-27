@@ -1,10 +1,12 @@
 # mcp-runner
 
-A TypeScript SDK for running MCP (Model Context Protocol) servers with process reuse capabilities.
+A TypeScript SDK and CLI for running MCP (Model Context Protocol) servers.
 
 ## Overview
 
 `mcp-runner` is designed to facilitate the execution of MCP servers based on configurations defined in `cline_mcp_settings.json`. It supports reusable server processes and controlled cleanup, allowing multiple operations to be performed using the same server instance.
+
+You can call it from the command line or use it as a library in your own TypeScript projects or even from other MCP servers.
 
 ## Features
 
@@ -20,7 +22,35 @@ A TypeScript SDK for running MCP (Model Context Protocol) servers with process r
 npm install
 ```
 
-## Usage
+## CLI Usage
+
+The package includes a command-line interface for interacting with MCP servers.
+
+### Commands
+
+#### List Tools
+Lists all available tools for a specified MCP server:
+```bash
+npm run cli list-tools <server-name>
+```
+
+Example:
+```bash
+npm run cli list-tools sequential-thinking
+```
+
+#### Run Server
+Runs a specified MCP server with optional parameters:
+```bash
+npm run cli runserver <server-name> [params]
+```
+
+Example:
+```bash
+npm run cli runserver sequential-thinking '{"thought": "Initial thought", "thoughtNumber": 1, "totalThoughts": 5, "nextThoughtNeeded": true}'
+```
+
+## Programmatic Usage
 
 ### Basic Example
 
