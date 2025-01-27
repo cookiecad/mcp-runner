@@ -9,15 +9,16 @@ async function main() {
 
   if (!command || !serverName) {
     console.log(`
-Usage: mcp-runner <command> <server-name> [params]
+Usage: mcp-runner <command> <server-name> [tool-name] [params]
 
 Commands:
-  list-tools <server-name>     List available tools for the specified server
-  runserver <server-name>      Run the specified server with optional parameters
+  list-tools <server-name>                    List available tools for the specified server
+  runserver <server-name> [tool-name] [params] Run a specific tool (or first available) with parameters
 
 Examples:
-  mcp-runner list-tools weather-server
-  mcp-runner runserver weather-server '{"city": "London"}'
+  mcp-runner list-tools sequential-thinking
+  mcp-runner runserver sequential-thinking sequentialthinking '{"thought": "Initial thought", "thoughtNumber": 1}'
+  mcp-runner runserver sequential-thinking '{"thought": "Initial thought", "thoughtNumber": 1}' # uses first available tool
 `);
     process.exit(1);
   }
@@ -36,8 +37,25 @@ Examples:
         break;
 
       case 'runserver':
-        const params = args[2] ? JSON.parse(args[2]) : {};
-        const result = await runServer(serverName, params);
+        let toolName: string | undefined;
+        let params: Record<string, unknown> = {};
+
+        // Check if third argument is a tool name or params
+        if (args[2]) {
+          try {
+            // Try to parse as JSON (params)
+            params = JSON.parse(args[2]);
+          } catch {
+            // If not JSON, treat as tool name
+            toolName = args[2];
+            // If there's a fourth argument, treat as params
+            if (args[3]) {
+              params = JSON.parse(args[3]);
+            }
+          }
+        }
+
+        const result = await runServer(serverName, toolName, params);
         console.log('\nServer response:', JSON.stringify(result, null, 2));
         await terminateServer();
         break;

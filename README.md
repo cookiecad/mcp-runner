@@ -40,13 +40,19 @@ npm run cli list-tools sequential-thinking
 ```
 
 #### Run Server
-Runs a specified MCP server with optional parameters:
+Runs a specified MCP server with optional tool name and parameters:
 ```bash
-npm run cli runserver <server-name> [params]
+npm run cli runserver <server-name> [tool-name] [params]
+# or
+npm run cli runserver <server-name> [params] # uses first available tool
 ```
 
-Example:
+Examples:
 ```bash
+# Run a specific tool
+npm run cli runserver sequential-thinking sequentialthinking '{"thought": "Initial thought", "thoughtNumber": 1, "totalThoughts": 5, "nextThoughtNeeded": true}'
+
+# Use first available tool
 npm run cli runserver sequential-thinking '{"thought": "Initial thought", "thoughtNumber": 1, "totalThoughts": 5, "nextThoughtNeeded": true}'
 ```
 
@@ -59,19 +65,19 @@ import { runServer, terminateServer } from 'mcp-runner';
 
 async function main() {
   try {
-    // First call
-    const result1 = await runServer('openrouterai', { 
+    // First call (specific tool)
+    const result1 = await runServer('openrouterai', 'chat_completion', {
       messages: [
         { role: 'user', content: 'Say hello!' }
-      ] 
+      ]
     });
     console.log('Result 1:', result1);
 
-    // Second call (reuses same server process)
-    const result2 = await runServer('openrouterai', { 
+    // Second call (uses first available tool)
+    const result2 = await runServer('openrouterai', undefined, {
       messages: [
         { role: 'user', content: 'How are you?' }
-      ] 
+      ]
     });
     console.log('Result 2:', result2);
 

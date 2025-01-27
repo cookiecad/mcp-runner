@@ -3,7 +3,7 @@ import { runServer, terminateServer } from './index.js';
 async function main() {
   try {
     // First call to runServer
-    const result1 = await runServer('openrouterai', {
+    const result1 = await runServer('openrouterai', 'chat_completion', {
       messages: [
         {
           role: 'user',
@@ -14,7 +14,7 @@ async function main() {
     console.log('Result 1:', JSON.stringify(result1, null, 2));
 
     // Second call to runServer using the same server process
-    const result2 = await runServer('openrouterai', {
+    const result2 = await runServer('openrouterai', undefined, {
       messages: [
         {
           role: 'user',

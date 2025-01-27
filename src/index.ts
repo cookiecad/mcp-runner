@@ -21,10 +21,11 @@ export async function listTools(serverName: string) {
 /**
  * Run an MCP server with the specified parameters
  * @param serverName - Name of the server to run from configuration
+ * @param toolName - Name of the tool to run (optional, uses first available tool if not specified)
  * @param params - Parameters to pass to the server's tool
  * @returns Promise resolving with the server's response
  */
-export async function runServer(serverName: string, params: Record<string, unknown>) {
+export async function runServer(serverName: string, toolName?: string, params: Record<string, unknown> = {}) {
   const serverManager = ServerManager.getInstance();
 
   try {
@@ -36,9 +37,23 @@ export async function runServer(serverName: string, params: Record<string, unkno
       throw new Error('No tools available from server');
     }
 
-    // Call first available tool with params
+    // Determine which tool to use
+    const selectedTool = toolName
+      ? tools.find(t => t.name === toolName)
+      : tools[0];
+
+    if (!selectedTool) {
+      const availableTools = tools.map(t => t.name).join(', ');
+      throw new Error(
+        toolName
+          ? `Tool "${toolName}" not found. Available tools: ${availableTools}`
+          : 'No tools available from server'
+      );
+    }
+
+    // Call the selected tool with params
     const result = await client.callTool({
-      name: tools[0].name,
+      name: selectedTool.name,
       arguments: params
     });
 
