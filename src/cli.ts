@@ -9,16 +9,20 @@ async function main() {
 
   if (!command || !serverName) {
     console.log(`
-Usage: mcp-runner <command> <server-name> [tool-name] [params]
+Usage: mcp-runner <command> <server-name> [tool-name] [params] [options]
 
 Commands:
   list-tools <server-name>                    List available tools for the specified server
   runserver <server-name> [tool-name] [params] Run a specific tool (or first available) with parameters
 
+Options:
+  --text     Output only the text content from the response
+
 Examples:
   mcp-runner list-tools sequential-thinking
   mcp-runner runserver sequential-thinking sequentialthinking '{"thought": "Initial thought", "thoughtNumber": 1}'
   mcp-runner runserver sequential-thinking '{"thought": "Initial thought", "thoughtNumber": 1}' # uses first available tool
+  mcp-runner runserver sequential-thinking sequentialthinking '{"thought": "Initial thought"}' --text # output only text
 `);
     process.exit(1);
   }
@@ -39,24 +43,55 @@ Examples:
       case 'runserver':
         let toolName: string | undefined;
         let params: Record<string, unknown> = {};
+        let textOnly = false;
+        let paramIndex = 2;
 
-        // Check if third argument is a tool name or params
-        if (args[2]) {
+        // Parse arguments
+        const remainingArgs = [...args.slice(2)]; // Copy args starting from index 2
+        
+        // Process each argument
+        while (remainingArgs.length > 0) {
+          const arg = remainingArgs.shift()!;
+          
+          if (arg === '--text') {
+            textOnly = true;
+            continue;
+          }
+          
           try {
             // Try to parse as JSON (params)
-            params = JSON.parse(args[2]);
+            params = JSON.parse(arg);
           } catch {
-            // If not JSON, treat as tool name
-            toolName = args[2];
-            // If there's a fourth argument, treat as params
-            if (args[3]) {
-              params = JSON.parse(args[3]);
+            // If not JSON and not a flag, treat as tool name
+            if (!arg.startsWith('--')) {
+              toolName = arg;
+              // Check next argument for params
+              const nextArg = remainingArgs[0];
+              if (nextArg && !nextArg.startsWith('--')) {
+                try {
+                  params = JSON.parse(nextArg);
+                  remainingArgs.shift(); // Remove the params argument
+                } catch {
+                  // If next arg isn't valid JSON, ignore it
+                }
+              }
             }
           }
         }
 
         const result = await runServer(serverName, toolName, params);
-        console.log('\nServer response:', JSON.stringify(result, null, 2));
+        
+        if (textOnly && Array.isArray(result.content)) {
+          // Extract and display only text content
+          const textContent = result.content
+            .filter((c: { type: string; text: string }) => c.type === 'text')
+            .map((c: { type: string; text: string }) => c.text)
+            .join('\n');
+          console.log('\n' + textContent);
+        } else {
+          console.log('\nServer response:', JSON.stringify(result, null, 2));
+        }
+        
         await terminateServer();
         break;
 

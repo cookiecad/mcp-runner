@@ -31,29 +31,35 @@ The package includes a command-line interface for interacting with MCP servers.
 #### List Tools
 Lists all available tools for a specified MCP server:
 ```bash
-npm run cli list-tools <server-name>
+npm run cli -- list-tools <server-name>
 ```
 
 Example:
 ```bash
-npm run cli list-tools sequential-thinking
+npm run cli -- list-tools sequential-thinking
 ```
 
 #### Run Server
 Runs a specified MCP server with optional tool name and parameters:
 ```bash
-npm run cli runserver <server-name> [tool-name] [params]
+npm run cli -- runserver <server-name> [tool-name] [params] [options]
 # or
-npm run cli runserver <server-name> [params] # uses first available tool
+npm run cli -- runserver <server-name> [params] [options] # uses first available tool
 ```
+
+Options:
+- `--text`: Output only the text content from the response instead of the full JSON
 
 Examples:
 ```bash
 # Run a specific tool
-npm run cli runserver sequential-thinking sequentialthinking '{"thought": "Initial thought", "thoughtNumber": 1, "totalThoughts": 5, "nextThoughtNeeded": true}'
+npm run cli -- runserver sequential-thinking sequentialthinking '{"thought": "Initial thought", "thoughtNumber": 1, "totalThoughts": 5, "nextThoughtNeeded": true}'
 
 # Use first available tool
-npm run cli runserver sequential-thinking '{"thought": "Initial thought", "thoughtNumber": 1, "totalThoughts": 5, "nextThoughtNeeded": true}'
+npm run cli -- runserver sequential-thinking '{"thought": "Initial thought", "thoughtNumber": 1, "totalThoughts": 5, "nextThoughtNeeded": true}'
+
+# Output only text content
+npm run cli -- runserver sequential-thinking sequentialthinking '{"thought": "Initial thought", "thoughtNumber": 1, "totalThoughts": 1}' --text
 ```
 
 ## Programmatic Usage
